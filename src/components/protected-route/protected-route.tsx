@@ -1,24 +1,34 @@
-import React, { ReactElement, ReactNode } from 'react';
-import { useSelector } from 'react-redux';
-import { Outlet, Navigate } from 'react-router-dom';
-import { RootState } from 'src/services/store';
-import { Preloader } from '../../components/ui';
+import { profileSelector, userSelector } from '@slices';
+import { ReactNode } from 'react';
+import { RootState, useSelector } from '../../services/store';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Preloader } from '../ui/preloader';
+
+type TProtectedRouteProps = {
+  fromLoginPage?: boolean;
+  children?: ReactNode | undefined;
+};
 
 export const ProtectedRoute = ({
-  accessRoles,
+  fromLoginPage,
   children
-}: {
-  accessRoles?: String[];
-  children?: ReactNode | undefined;
-}) => {
-  const store = useSelector((store: RootState) => store);
+}: TProtectedRouteProps) => {
+  const { user, isLoading, isLoggedIn } = useSelector(profileSelector);
+  const location = useLocation();
 
-  // if (isInit || isLoading) {
-  //   return <Preloader />;
-  // }
+  console.log(user, isLoading, isLoggedIn);
+  if (isLoading) {
+    return <Preloader />;
+  }
 
-  // if (!accessRoles.includes('role')) {
-  //   return <Navigate replace to='/sign-in' />;
-  // }
+  if (!fromLoginPage && !isLoggedIn) {
+    return <Navigate replace to={'/login'} />;
+  }
+
+  if (fromLoginPage && isLoggedIn) {
+    const from = location.state?.from || { pathname: '/' };
+    return <Navigate replace to={from} />;
+  }
+
   return children;
 };
