@@ -13,7 +13,7 @@ import '../../index.css';
 import styles from './app.module.css';
 
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { ProtectedRoute } from '../protected-route/protected-route';
 import { useEffect } from 'react';
 import { useDispatch } from '../../services/store';
@@ -22,6 +22,9 @@ import { getUser, init } from '@slices';
 const App = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const location = useLocation();
+  const backgroundLocation = location.state?.background;
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -35,7 +38,7 @@ const App = () => {
   return (
     <div className={styles.app}>
       <AppHeader />
-      <Routes>
+      <Routes location={backgroundLocation || location}>
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
         <Route
@@ -114,11 +117,12 @@ const App = () => {
           path='/profile/orders/:number'
           element={
             <ProtectedRoute>
-              {' '}
-              <Modal title={'Описание заказа'} onClose={() => navigate(-1)}>
-                {' '}
+              <Modal
+                title={'Описание заказа'}
+                onClose={() => navigate(backgroundLocation)}
+              >
                 <OrderInfo />
-              </Modal>{' '}
+              </Modal>
             </ProtectedRoute>
           }
         />
