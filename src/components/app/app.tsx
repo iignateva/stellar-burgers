@@ -15,7 +15,7 @@ import styles from './app.module.css';
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { ProtectedRoute } from '../protected-route/protected-route';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from '../../services/store';
 import { getUser, init } from '@slices';
 
@@ -115,7 +115,13 @@ const App = () => {
           element={
             <ProtectedRoute>
               {' '}
-              <OrderInfo />{' '}
+              <Modal
+                title={'Описание заказа'}
+                onClose={() => navigate(-1)}
+              >
+                {' '}
+                <OrderInfo />
+              </Modal>{' '}
             </ProtectedRoute>
           }
         />

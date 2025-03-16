@@ -3,6 +3,8 @@ import {
   TRegisterData,
   getFeedsApi,
   getIngredientsApi,
+  getOrderByNumberApi,
+  getOrdersApi,
   getUserApi,
   loginUserApi,
   logoutApi,
@@ -151,7 +153,6 @@ export type TProfile = {
   isLoggedIn: boolean;
   user: TUser;
   error: string | null;
-  password: string | null;
 };
 
 const profileInitial: TProfile = {
@@ -161,7 +162,6 @@ const profileInitial: TProfile = {
     email: '',
     name: ''
   },
-  password: null,
   error: null
 };
 
@@ -216,6 +216,8 @@ export const updateUser = createAsyncThunk(
   }
 );
 
+export const getUserOrders = createAsyncThunk('/orders', async () => getOrdersApi());
+
 const saveTokens = (accessToken: string, refreshToken: string) => {
   setCookie('accessToken', accessToken);
   localStorage.setItem('refreshToken', refreshToken);
@@ -245,7 +247,6 @@ export const profileSlice = createSlice({
         state.isLoggedIn = false;
         state.user = { name: '', email: '' };
         state.isLoading = false;
-        state.password = null;
       })
       .addCase(userRegister.pending, (state) => {
         state.isLoading = true;
@@ -255,7 +256,6 @@ export const profileSlice = createSlice({
         state.error = actual.error.message || null;
         state.isLoggedIn = false;
         state.user = { name: '', email: '' };
-        state.password = null;
       })
       .addCase(userRegister.fulfilled, (state, actual) => {
         state.isLoading = false;
@@ -285,7 +285,6 @@ export const profileSlice = createSlice({
         state.error = actual.error.message || null;
         state.isLoggedIn = false;
         state.user = { name: '', email: '' };
-        state.password = null;
       })
       .addCase(getUser.fulfilled, (state, actual) => {
         state.isLoading = false;
@@ -306,9 +305,9 @@ export const profileSlice = createSlice({
   }
 });
 
-
 export type TFeedsState = {
   orders: TOrder[];
+  profileOrders: TOrder[],
   total: number;
   totalToday: number;
   loading: boolean;
@@ -317,6 +316,7 @@ export type TFeedsState = {
 
 const feedInitialState: TFeedsState = {
   orders: [],
+  profileOrders: [],
   total: 0,
   totalToday: 0,
   loading: false,
@@ -327,6 +327,9 @@ export const getFeeds = createAsyncThunk('/orders/all', async () =>
   getFeedsApi()
 );
 
+export const getOrderByNumber = createAsyncThunk('orders/byId', async (orderNumber: number) =>
+  getOrderByNumberApi(orderNumber)
+);
 
 export const feedsSlice = createSlice({
   name: 'feeds',
@@ -338,7 +341,7 @@ export const feedsSlice = createSlice({
        const filteredOrders = state.orders.filter(
          (it) => it.number === orderNumber
        );
-       return filteredOrders.length > 0 ? filteredOrders[0] : null; 
+        return filteredOrders.length > 0 ? filteredOrders[0] : null; 
       }
   },
   extraReducers: (builder) => {
@@ -356,6 +359,28 @@ export const feedsSlice = createSlice({
         state.orders = action.payload.orders;
         state.total = action.payload.total;
         state.totalToday = action.payload.totalToday;
+      })
+      .addCase(getUserOrders.rejected, (state, actual) => {
+        state.error = actual.error.message || null;
+      })
+      .addCase(getUserOrders.fulfilled, (state, actual) => {
+        state.profileOrders = actual.payload;
+        if (state.orders.length === 0) {
+          state.orders = actual.payload;
+        }
+      })
+      .addCase(getOrderByNumber.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getOrderByNumber.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || null;
+      })
+      .addCase(getOrderByNumber.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload.orders;
+        console.log(action.payload.orders);
       });
   }
 });

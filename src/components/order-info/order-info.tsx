@@ -8,7 +8,7 @@ import { ingredientsSelector, orderInfoSelector } from '@slices';
 
 export const OrderInfo: FC = () => {
   /** TODO: взять переменные orderData и ingredients из стора */
-  const { number} = useParams();
+  const { number } = useParams();
 
   const notExistedOrder = {
     createdAt: '',
@@ -20,9 +20,10 @@ export const OrderInfo: FC = () => {
     number: 0
   };
   
-  const orderData = useSelector((state) =>
-    orderInfoSelector(state, Number(number)) || notExistedOrder
+  const orderData = useSelector(
+    (state) => orderInfoSelector(state, Number(number)) || notExistedOrder
   );
+
   const ingredients = useSelector(ingredientsSelector);
 
   /* Готовим данные для отображения */

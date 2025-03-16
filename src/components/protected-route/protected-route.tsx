@@ -13,7 +13,7 @@ export const ProtectedRoute = ({
   fromLoginPage,
   children
 }: TProtectedRouteProps) => {
-  const { user, isLoading, isLoggedIn } = useSelector(profileSelector);
+  const { isLoading, isLoggedIn } = useSelector(profileSelector);
   const location = useLocation();
 
   if (isLoading) {
