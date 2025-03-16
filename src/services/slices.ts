@@ -409,7 +409,6 @@ export const feedsSlice = createSlice({
       .addCase(getOrderByNumber.fulfilled, (state, action) => {
         state.loading = false;
         state.orders = action.payload.orders;
-        console.log(action.payload.orders);
       });
   }
 });

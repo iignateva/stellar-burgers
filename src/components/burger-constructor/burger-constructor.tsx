@@ -11,7 +11,7 @@ import {
   profileSelector,
   sentOrderRequest
 } from '@slices';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const BurgerConstructor: FC = () => {
   /** TODO: взять переменные constructorItems, orderRequest и orderModalData из стора */
