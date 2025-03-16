@@ -8,10 +8,8 @@ import { ingredientsSelector } from '@slices';
 export const IngredientDetails: FC = () => {
   /** TODO: взять переменную из стора */
   const { id } = useParams();
-  console.log(id);
   const ingredients = useSelector(ingredientsSelector);
   const ingredientData = ingredients.filter((it) => it._id === id)[0];
-  console.log(ingredients);
 
   if (!ingredientData) {
     return <Preloader />;

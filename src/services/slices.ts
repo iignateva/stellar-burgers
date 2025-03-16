@@ -1,15 +1,17 @@
 import {
   TLoginData,
   TRegisterData,
+  getFeedsApi,
   getIngredientsApi,
   getUserApi,
   loginUserApi,
   logoutApi,
+  orderBurgerApi,
   registerUserApi,
   updateUserApi
 } from '@api';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { TConstructorIngredient, TIngredient, TUser } from '@utils-types';
+import { TConstructorIngredient, TIngredient, TOrder, TUser } from '@utils-types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { setCookie } from '../utils/cookie';
 
@@ -57,12 +59,32 @@ export const ingredientsSlice = createSlice({
 export type TConstructorItems = {
   ingredients: TConstructorIngredient[];
   bun: TConstructorIngredient | null;
+  orderRequest: boolean;
+  orderModalData: TOrder | null;
+  orderInProcess: boolean;
+  orderError: string | null;
+  orderResult: TOrder | null;
+  orderName: string | null;
 };
 
 const initialConstructorItems: TConstructorItems = {
   ingredients: [],
-  bun: null
+  bun: null,
+  orderRequest: false,
+  orderModalData: null,
+  orderInProcess: false,
+  orderError: null,
+  orderResult: null,
+  orderName: null
 };
+
+export const createOrder = createAsyncThunk('orders', async (data: string[]) => {
+  const response = await orderBurgerApi(data);
+  if (!response.success) {
+    return Promise.reject(response);
+  }
+  return response;
+});
 
 export const constructorItemsSlice = createSlice({
   name: 'constructorItems',
@@ -74,10 +96,53 @@ export const constructorItemsSlice = createSlice({
       } else {
         state.ingredients.push({ id: action.payload._id, ...action.payload });
       }
+    },
+    deleteIngredient: (state, action: PayloadAction<number>) => {
+      state.ingredients.splice(action.payload, 1);
+    },
+    moveUpIngredient: (state, action: PayloadAction<number>) => {
+      const previosEl = state.ingredients[action.payload - 1];
+      state.ingredients.splice(action.payload + 1, 0, previosEl);
+      state.ingredients.splice(action.payload - 1, 1);
+    },
+    moveDownIngredient: (state, action: PayloadAction<number>) => {
+      const currentEl = state.ingredients[action.payload];
+      state.ingredients.splice(action.payload + 2, 0, currentEl);
+      state.ingredients.splice(action.payload, 1);
+    },
+    sentOrderRequest: (state) => {
+      state.orderRequest = true;
+    },
+    orderRequestDone: (state) => {
+      state.orderRequest = false,
+      state.ingredients = [],
+      state.bun = null,
+      state.orderError = null,
+      state.orderInProcess = false,
+      state.orderName = null,
+      state.orderResult = null,
+      state.orderModalData = null
     }
   },
   selectors: {
     constructorItemsSelector: (state) => state
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(createOrder.pending, (state) => {
+        state.orderInProcess = true;
+      })
+      .addCase(createOrder.rejected, (state, action) => {
+        state.orderInProcess = false;
+        state.orderError = action.error.message || null;
+      })
+      .addCase(createOrder.fulfilled, (state, action) => {
+        state.orderInProcess = false;
+        state.orderResult = action.payload.order;
+        state.orderName = action.payload.name;
+        state.orderModalData = action.payload.order;
+        state.orderRequest = false;
+      });
   }
 });
 
@@ -241,11 +306,72 @@ export const profileSlice = createSlice({
   }
 });
 
+
+export type TFeedsState = {
+  orders: TOrder[];
+  total: number;
+  totalToday: number;
+  loading: boolean;
+  error: string | null;
+};
+
+const feedInitialState: TFeedsState = {
+  orders: [],
+  total: 0,
+  totalToday: 0,
+  loading: false,
+  error: null
+};
+
+export const getFeeds = createAsyncThunk('/orders/all', async () =>
+  getFeedsApi()
+);
+
+
+export const feedsSlice = createSlice({
+  name: 'feeds',
+  initialState: feedInitialState,
+  reducers: {},
+  selectors: {
+    feedsSelector: (state) => state,
+    orderInfoSelector: (state, orderNumber) => {
+       const filteredOrders = state.orders.filter(
+         (it) => it.number === orderNumber
+       );
+       return filteredOrders.length > 0 ? filteredOrders[0] : null; 
+      }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getFeeds.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getFeeds.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || null;
+      })
+      .addCase(getFeeds.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload.orders;
+        state.total = action.payload.total;
+        state.totalToday = action.payload.totalToday;
+      });
+  }
+});
+
 export const { ingredientsSelector, isIngredientsLoadingSelector } =
   ingredientsSlice.selectors;
-
 export const { constructorItemsSelector } = constructorItemsSlice.selectors;
 export const { profileSelector, userSelector } = profileSlice.selectors;
+export const { feedsSelector, orderInfoSelector } = feedsSlice.selectors;
 
-export const { addIngredient } = constructorItemsSlice.actions;
+export const {
+  addIngredient,
+  deleteIngredient,
+  moveUpIngredient,
+  moveDownIngredient,
+  sentOrderRequest,
+  orderRequestDone
+} = constructorItemsSlice.actions;
 export const { init } = profileSlice.actions;

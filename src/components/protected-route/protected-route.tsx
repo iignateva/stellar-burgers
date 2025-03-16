@@ -16,7 +16,6 @@ export const ProtectedRoute = ({
   const { user, isLoading, isLoggedIn } = useSelector(profileSelector);
   const location = useLocation();
 
-  console.log(user, isLoading, isLoggedIn);
   if (isLoading) {
     return <Preloader />;
   }

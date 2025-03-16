@@ -13,7 +13,7 @@ import '../../index.css';
 import styles from './app.module.css';
 
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { ProtectedRoute } from '../protected-route/protected-route';
 import { useEffect, useState } from 'react';
 import { useDispatch } from '../../services/store';
@@ -21,6 +21,7 @@ import { getUser, init } from '@slices';
 
 const App = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -96,7 +97,7 @@ const App = () => {
         <Route
           path='/feed/:number'
           element={
-            <Modal title={''} onClose={() => {}}>
+            <Modal title={'Заказ'} onClose={() => navigate(-1)}>
               <OrderInfo />
             </Modal>
           }
@@ -104,7 +105,7 @@ const App = () => {
         <Route
           path='/ingredients/:id'
           element={
-            <Modal title={''} onClose={() => {}}>
+            <Modal title={'Описание ингредиента'} onClose={() => navigate(-1)}>
               <IngredientDetails />
             </Modal>
           }

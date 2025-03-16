@@ -11,9 +11,9 @@
   },
   "rules": {
     "prettier/prettier": [
-      "warn",
+      "off",
       {
-        "usePrettierrc": true
+        "usePrettierrc": false
       }
     ],
     "react/react-in-jsx-scope": "off",

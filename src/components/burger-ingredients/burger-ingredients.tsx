@@ -11,7 +11,6 @@ import { RootState, useSelector } from '../../services/store';
 export const BurgerIngredients: FC = () => {
   /** TODO: взять переменные из стора */
   const ingredients = useSelector(ingredientsSelector);
-  console.log(ingredients);
 
   const buns: TIngredient[] = ingredients.filter((it) => it.type === 'bun');
   const mains: TIngredient[] = ingredients.filter((it) => it.type === 'main');
