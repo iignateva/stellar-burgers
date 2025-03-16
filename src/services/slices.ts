@@ -13,7 +13,12 @@ import {
   updateUserApi
 } from '@api';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { TConstructorIngredient, TIngredient, TOrder, TUser } from '@utils-types';
+import {
+  TConstructorIngredient,
+  TIngredient,
+  TOrder,
+  TUser
+} from '@utils-types';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { setCookie } from '../utils/cookie';
 
@@ -61,32 +66,12 @@ export const ingredientsSlice = createSlice({
 export type TConstructorItems = {
   ingredients: TConstructorIngredient[];
   bun: TConstructorIngredient | null;
-  orderRequest: boolean;
-  orderModalData: TOrder | null;
-  orderInProcess: boolean;
-  orderError: string | null;
-  orderResult: TOrder | null;
-  orderName: string | null;
 };
 
 const initialConstructorItems: TConstructorItems = {
   ingredients: [],
-  bun: null,
-  orderRequest: false,
-  orderModalData: null,
-  orderInProcess: false,
-  orderError: null,
-  orderResult: null,
-  orderName: null
+  bun: null
 };
-
-export const createOrder = createAsyncThunk('orders', async (data: string[]) => {
-  const response = await orderBurgerApi(data);
-  if (!response.success) {
-    return Promise.reject(response);
-  }
-  return response;
-});
 
 export const constructorItemsSlice = createSlice({
   name: 'constructorItems',
@@ -112,36 +97,77 @@ export const constructorItemsSlice = createSlice({
       state.ingredients.splice(action.payload + 2, 0, currentEl);
       state.ingredients.splice(action.payload, 1);
     },
-    sentOrderRequest: (state) => {
-      state.orderRequest = true;
-    },
-    orderRequestDone: (state) => {
-      state.orderRequest = false,
-      state.ingredients = [],
-      state.bun = null,
-      state.orderError = null,
-      state.orderInProcess = false,
-      state.orderName = null,
-      state.orderResult = null,
-      state.orderModalData = null
+    clearConstructorItems: (state) => {
+      state.ingredients = [];
+      state.bun = null;
     }
   },
   selectors: {
     constructorItemsSelector: (state) => state
+  }
+});
+
+export type TOrderRequest = {
+  orderRequest: boolean;
+  orderModalData: TOrder | null;
+  inProcess: boolean;
+  error: string | null;
+  result: TOrder | null;
+  name: string | null;
+};
+
+const initialOrderRequest: TOrderRequest = {
+  orderRequest: false,
+  orderModalData: null,
+  inProcess: false,
+  error: null,
+  result: null,
+  name: null
+};
+
+export const createOrder = createAsyncThunk(
+  'orders',
+  async (data: string[]) => {
+    const response = await orderBurgerApi(data);
+    if (!response.success) {
+      return Promise.reject(response);
+    }
+    return response;
+  }
+);
+
+export const orderRequestSlice = createSlice({
+  name: 'orderRequest',
+  initialState: initialOrderRequest,
+  reducers: {
+    sentOrderRequest: (state) => {
+      state.orderRequest = true;
+    },
+    orderRequestDone: (state) => {
+      state.orderRequest = false;
+      state.error = null;
+      state.inProcess = false;
+      state.name = null;
+      state.result = null;
+      state.orderModalData = null;
+    }
+  },
+  selectors: {
+    orderRequestSelector: (state) => state
   },
   extraReducers: (builder) => {
     builder
       .addCase(createOrder.pending, (state) => {
-        state.orderInProcess = true;
+        state.inProcess = true;
       })
       .addCase(createOrder.rejected, (state, action) => {
-        state.orderInProcess = false;
-        state.orderError = action.error.message || null;
+        state.inProcess = false;
+        state.error = action.error.message || null;
       })
       .addCase(createOrder.fulfilled, (state, action) => {
-        state.orderInProcess = false;
-        state.orderResult = action.payload.order;
-        state.orderName = action.payload.name;
+        state.inProcess = false;
+        state.result = action.payload.order;
+        state.name = action.payload.name;
         state.orderModalData = action.payload.order;
         state.orderRequest = false;
       });
@@ -216,7 +242,9 @@ export const updateUser = createAsyncThunk(
   }
 );
 
-export const getUserOrders = createAsyncThunk('/orders', async () => getOrdersApi());
+export const getUserOrders = createAsyncThunk('user/orders', async () =>
+  getOrdersApi()
+);
 
 const saveTokens = (accessToken: string, refreshToken: string) => {
   setCookie('accessToken', accessToken);
@@ -307,7 +335,7 @@ export const profileSlice = createSlice({
 
 export type TFeedsState = {
   orders: TOrder[];
-  profileOrders: TOrder[],
+  profileOrders: TOrder[];
   total: number;
   totalToday: number;
   loading: boolean;
@@ -323,12 +351,13 @@ const feedInitialState: TFeedsState = {
   error: null
 };
 
-export const getFeeds = createAsyncThunk('/orders/all', async () =>
+export const getFeeds = createAsyncThunk('orders/all', async () =>
   getFeedsApi()
 );
 
-export const getOrderByNumber = createAsyncThunk('orders/byId', async (orderNumber: number) =>
-  getOrderByNumberApi(orderNumber)
+export const getOrderByNumber = createAsyncThunk(
+  'orders/getById',
+  async (orderNumber: number) => getOrderByNumberApi(orderNumber)
 );
 
 export const feedsSlice = createSlice({
@@ -338,11 +367,11 @@ export const feedsSlice = createSlice({
   selectors: {
     feedsSelector: (state) => state,
     orderInfoSelector: (state, orderNumber) => {
-       const filteredOrders = state.orders.filter(
-         (it) => it.number === orderNumber
-       );
-        return filteredOrders.length > 0 ? filteredOrders[0] : null; 
-      }
+      const filteredOrders = state.orders.filter(
+        (it) => it.number === orderNumber
+      );
+      return filteredOrders.length > 0 ? filteredOrders[0] : null;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -390,13 +419,14 @@ export const { ingredientsSelector, isIngredientsLoadingSelector } =
 export const { constructorItemsSelector } = constructorItemsSlice.selectors;
 export const { profileSelector, userSelector } = profileSlice.selectors;
 export const { feedsSelector, orderInfoSelector } = feedsSlice.selectors;
+export const { orderRequestSelector } = orderRequestSlice.selectors;
 
 export const {
   addIngredient,
   deleteIngredient,
   moveUpIngredient,
   moveDownIngredient,
-  sentOrderRequest,
-  orderRequestDone
+  clearConstructorItems
 } = constructorItemsSlice.actions;
 export const { init } = profileSlice.actions;
+export const { sentOrderRequest, orderRequestDone } = orderRequestSlice.actions;

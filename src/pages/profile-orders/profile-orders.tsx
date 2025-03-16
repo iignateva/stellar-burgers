@@ -8,7 +8,7 @@ export const ProfileOrders: FC = () => {
   /** TODO: взять переменную из стора */
   const dispatch = useDispatch();
   const orders: TOrder[] = useSelector(feedsSelector).profileOrders;
-  
+
   useEffect(() => {
     dispatch(getUserOrders());
   }, []);

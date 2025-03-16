@@ -19,7 +19,7 @@ export const OrderInfo: FC = () => {
     updatedAt: 'string',
     number: 0
   };
-  
+
   const orderData = useSelector(
     (state) => orderInfoSelector(state, Number(number)) || notExistedOrder
   );
