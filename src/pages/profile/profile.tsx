@@ -4,7 +4,7 @@ import { FC, SyntheticEvent, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
 
 export const Profile: FC = () => {
-  const user = useSelector(userSelector)?.user;
+  const { user } = useSelector(userSelector);
   const dispatch = useDispatch();
 
   const [formValue, setFormValue] = useState({

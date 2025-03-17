@@ -27,12 +27,7 @@ const App = () => {
   const backgroundLocation = location.state?.background;
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      dispatch(getUser());
-    } else {
-      dispatch(init());
-    }
+    dispatch(getUser());
   }, []);
 
   return (

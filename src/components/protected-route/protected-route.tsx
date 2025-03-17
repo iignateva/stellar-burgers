@@ -1,7 +1,7 @@
 import { profileSelector, userSelector } from '@slices';
 import { ReactNode } from 'react';
 import { RootState, useSelector } from '../../services/store';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Preloader } from '../ui/preloader';
 
 type TProtectedRouteProps = {
@@ -21,7 +21,7 @@ export const ProtectedRoute = ({
   }
 
   if (!fromLoginPage && !isLoggedIn) {
-    return <Navigate replace to={'/login'} />;
+    return <Navigate replace to={'/login'} state={{ from: location }} />;
   }
 
   if (fromLoginPage && isLoggedIn) {
