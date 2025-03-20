@@ -34,8 +34,9 @@ const initialState: TIngredientState = {
   error: null
 };
 
-export const getIngredients = createAsyncThunk('ingredients/getAll', async () =>
-  getIngredientsApi()
+export const getIngredients = createAsyncThunk(
+  'ingredients/getAll',
+  getIngredientsApi
 );
 
 export const ingredientsSlice = createSlice({
@@ -191,9 +192,7 @@ const profileInitial: TProfile = {
   error: null
 };
 
-export const userLogout = createAsyncThunk('user/logout', async () =>
-  logoutApi()
-);
+export const userLogout = createAsyncThunk('user/logout', logoutApi);
 
 export const userRegister = createAsyncThunk(
   'user/register',
@@ -242,9 +241,7 @@ export const updateUser = createAsyncThunk(
   }
 );
 
-export const getUserOrders = createAsyncThunk('user/orders', async () =>
-  getOrdersApi()
-);
+export const getUserOrders = createAsyncThunk('user/orders', getOrdersApi);
 
 const saveTokens = (accessToken: string, refreshToken: string) => {
   setCookie('accessToken', accessToken);
@@ -336,6 +333,7 @@ export const profileSlice = createSlice({
 export type TFeedsState = {
   orders: TOrder[];
   profileOrders: TOrder[];
+  selectedOrder: TOrder | null;
   total: number;
   totalToday: number;
   loading: boolean;
@@ -345,15 +343,14 @@ export type TFeedsState = {
 const feedInitialState: TFeedsState = {
   orders: [],
   profileOrders: [],
+  selectedOrder: null,
   total: 0,
   totalToday: 0,
   loading: false,
   error: null
 };
 
-export const getFeeds = createAsyncThunk('orders/all', async () =>
-  getFeedsApi()
-);
+export const getFeeds = createAsyncThunk('orders/all', getFeedsApi);
 
 export const getOrderByNumber = createAsyncThunk(
   'orders/getById',
@@ -366,12 +363,7 @@ export const feedsSlice = createSlice({
   reducers: {},
   selectors: {
     feedsSelector: (state) => state,
-    orderInfoSelector: (state, orderNumber) => {
-      const filteredOrders = state.orders.filter(
-        (it) => it.number === orderNumber
-      );
-      return filteredOrders.length > 0 ? filteredOrders[0] : null;
-    }
+    orderInfoSelector: (state) => state.selectedOrder
   },
   extraReducers: (builder) => {
     builder
@@ -408,7 +400,7 @@ export const feedsSlice = createSlice({
       })
       .addCase(getOrderByNumber.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = action.payload.orders;
+        state.selectedOrder = action.payload.orders[0] || null;
       });
   }
 });

@@ -17,11 +17,15 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { ProtectedRoute } from '../protected-route/protected-route';
 import { useEffect } from 'react';
 import { useDispatch } from '../../services/store';
-import { getUser, init } from '@slices';
+import { getIngredients, getUser } from '@slices';
 
 const App = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(getIngredients());
+  }, []);
 
   const location = useLocation();
   const backgroundLocation = location.state?.background;
