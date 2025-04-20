@@ -8,7 +8,7 @@ describe('Тесты для страницы конструктора бурге
   });
 
   it('сервис должен быть доступен по адресу localhost:5173', function () {
-    cy.visit('http://localhost:4000');
+    cy.visit('/');
   });
 
   it('Неавторизованный пользователь заходит на страницу и собирает бургер', () => {
@@ -16,7 +16,7 @@ describe('Тесты для страницы конструктора бурге
       fixture: '../fixtures/user-not-auth.json'
     }).as('unauthorizedUser');
 
-    cy.visit('http://localhost:4000');
+    cy.visit('/');
     // Ждем пока придут ингредиенты
     cy.wait('@getIngredients').then(() => {
       // Добавляем булку, пару начинок и соус
@@ -48,7 +48,7 @@ describe('Тесты для страницы конструктора бурге
       fixture: '../fixtures/user-not-auth.json'
     }).as('unauthorizedUser');
 
-    cy.visit('http://localhost:4000');
+    cy.visit('/');
     // Ждем пока придут ингредиенты
     cy.wait('@getIngredients').then(() => {
       // модального окна нет
@@ -74,7 +74,7 @@ describe('Тесты для страницы конструктора бурге
       fixture: '../fixtures/user-not-auth.json'
     }).as('unauthorizedUser');
 
-    cy.visit('http://localhost:4000');
+    cy.visit('/');
     // Ждем пока придут ингредиенты
     cy.wait('@getIngredients').then(() => {
       // модального окна нет
@@ -119,7 +119,7 @@ describe('Тесты для страницы конструктора бурге
       });
     });
 
-    cy.visit('http://localhost:4000');
+    cy.visit('/');
     // Ждем пока придут ингредиенты
     cy.wait('@getIngredients').then(() => {
       // модального окна нет
