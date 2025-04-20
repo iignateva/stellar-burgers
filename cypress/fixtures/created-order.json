@@ -1,0 +1,77 @@
+{
+  "success": true,
+  "name": "Люминесцентный бургер",
+  "order": {
+    "ingredients": [
+      {
+        "_id": "643d69a5c3f7b9001cfa094a",
+        "name": "Сыр с астероидной плесенью",
+        "type": "main",
+        "proteins": 84,
+        "fat": 48,
+        "carbohydrates": 420,
+        "calories": 3377,
+        "price": 4142,
+        "image": "https://code.s3.yandex.net/react/code/cheese.png",
+        "image_mobile": "https://code.s3.yandex.net/react/code/cheese-mobile.png",
+        "image_large": "https://code.s3.yandex.net/react/code/cheese-large.png",
+        "__v": 0
+      },
+      {
+        "_id": "643d69a5c3f7b9001cfa0945",
+        "name": "Соус с шипами Антарианского плоскоходца",
+        "type": "sauce",
+        "proteins": 101,
+        "fat": 99,
+        "carbohydrates": 100,
+        "calories": 100,
+        "price": 88,
+        "image": "https://code.s3.yandex.net/react/code/sauce-01.png",
+        "image_mobile": "https://code.s3.yandex.net/react/code/sauce-01-mobile.png",
+        "image_large": "https://code.s3.yandex.net/react/code/sauce-01-large.png",
+        "__v": 0
+      },
+      {
+        "_id": "643d69a5c3f7b9001cfa0948",
+        "name": "Кристаллы марсианских альфа-сахаридов",
+        "type": "main",
+        "proteins": 234,
+        "fat": 432,
+        "carbohydrates": 111,
+        "calories": 189,
+        "price": 762,
+        "image": "https://code.s3.yandex.net/react/code/core.png",
+        "image_mobile": "https://code.s3.yandex.net/react/code/core-mobile.png",
+        "image_large": "https://code.s3.yandex.net/react/code/core-large.png",
+        "__v": 0
+      },
+      {
+        "_id": "643d69a5c3f7b9001cfa093d",
+        "name": "Флюоресцентная булка R2-D3",
+        "type": "bun",
+        "proteins": 44,
+        "fat": 26,
+        "carbohydrates": 85,
+        "calories": 643,
+        "price": 988,
+        "image": "https://code.s3.yandex.net/react/code/bun-01.png",
+        "image_mobile": "https://code.s3.yandex.net/react/code/bun-01-mobile.png",
+        "image_large": "https://code.s3.yandex.net/react/code/bun-01-large.png",
+        "__v": 0
+      }
+    ],
+    "_id": "6804f20ce8e61d001cec395f",
+    "owner": {
+      "name": "Irina I",
+      "email": "irina@mail.ru",
+      "createdAt": "2025-03-13T20:25:23.044Z",
+      "updatedAt": "2025-04-20T09:34:23.250Z"
+    },
+    "status": "done",
+    "name": "Люминесцентный бургер",
+    "createdAt": "2025-04-20T13:09:32.508Z",
+    "updatedAt": "2025-04-20T13:09:33.760Z",
+    "number": 999999,
+    "price": 988
+  }
+}
