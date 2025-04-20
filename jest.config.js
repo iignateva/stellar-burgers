@@ -89,7 +89,10 @@ const config = {
   // ],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
-  // moduleNameMapper: {},
+  moduleNameMapper: {
+    '^@slices$': './slices',
+    '^@api$': '../utils/burger-api'
+  },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
@@ -145,7 +148,7 @@ const config = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  // testEnvironment: "jest-environment-node",
+  testEnvironment: 'jsdom',
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
@@ -175,14 +178,9 @@ const config = {
 
   // A map from regular expressions to paths to transformers
   transform: {
-    // '^.+\\.[tj]sx?$' для обработки файлов js/ts с помощью `ts-jest`
-    // '^.+\\.m?[tj]sx?$' для обработки файлов js/ts/mjs/mts с помощью `ts-jest`
-    '^.+\\.tsx?$': [
-      'ts-jest',
-      {
-        // настройки для ts-jest
-      }
-    ]
+    '\\.jsx?$': 'babel-jest',
+    '^.+\\.tsx?$': 'ts-jest',
+    '.+\\.(css|styl|less|sass|scss)$': 'jest-css-modules-transform'
   }
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
